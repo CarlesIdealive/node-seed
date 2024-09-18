@@ -24,9 +24,6 @@ export class EmailService {
         }
     });
     
-    constructor(
-        
-    ) {}
 
     async sendEmail( sendOptions: SendEmailOptions ) : Promise<boolean> {
         const { to, subject, htmlBody, attachments = [] } = sendOptions;
@@ -38,8 +35,6 @@ export class EmailService {
                 html: htmlBody,
                 attachments: attachments
             });
-            console.log('Email sent', sentInformation);
-            
             return true;
 
         } catch (error) {
