@@ -3,7 +3,7 @@ import { LogEntity, LogSeverityLevel } from "../../domain/entities/log.entity";
 import { LogRepository } from "../../domain/repositories/log.repository";
 
 
-export class FileSystemLogRepository implements LogRepository {
+export class LogRepositoryImpl implements LogRepository {
     private readonly logDatasource: LogDatasource;
     
     constructor( logDatasource: LogDatasource) {

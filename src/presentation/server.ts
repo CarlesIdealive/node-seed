@@ -1,15 +1,16 @@
 import { SendLogEmailUseCaseImpl } from "../domain/use-cases/email/send-email-logs.usecase";
 import { FileSystemLogDataSource } from "../infrastructure/datasources/filesystem-log.datasource";
-import { FileSystemLogRepository } from "../infrastructure/repositories/filesystem-log.repository";
+import { MongoBDLogDataSource } from "../infrastructure/datasources/mongodb-log-datasource";
+import { LogRepositoryImpl } from "../infrastructure/repositories/log.repository-impl";
 import { EmailService } from "./email/email.service";
 
 
 
 //Instancias de las implementaciones de los casos de uso
-const fileSystemLogRepository = new FileSystemLogRepository(
-    new FileSystemLogDataSource()
+const logRepository = new LogRepositoryImpl(
+    // new FileSystemLogDataSource()
+    new MongoBDLogDataSource()
     //new postgressSQLLogDataSource()
-    //new mongoDBLogDataSource()
     //new sqliteLogDataSource()
     //new sqlServerLogDataSource()
 );
@@ -41,7 +42,7 @@ export class Server {
 
 
         //Mandar email con el UseCase
-        const sendLogEmailUseCase = new SendLogEmailUseCaseImpl(emailService, fileSystemLogRepository);
+        const sendLogEmailUseCase = new SendLogEmailUseCaseImpl(emailService, logRepository);
         sendLogEmailUseCase.execute('carles.labrana@idealiveconsulting.com');
 
          
