@@ -18,22 +18,29 @@ export class SendLogEmailUseCaseImpl implements SendLogEmailUseCase {
 
     async execute( to: string | string[] ) : Promise<boolean> {
         try {
-            const sent = await this.emailService.sendEmailWithFileSystemLogs(to);
+            // const sent = await this.emailService.sendEmailWithFileSystemLogs(to);
+            const sent = await this.emailService.sendEmail({
+                to,
+                subject: 'Logs del servidor',
+                htmlBody: `<h1>Logs del servidor xxxxxxxxxx</h1>`,
+            });
             if (!sent) {
                 throw new Error('Email log not sent');
             }
-            const log = new LogEntity(
-                LogSeverityLevel.info,
-                'Log email was sent',
-            );
+            const log = new LogEntity({
+                level: LogSeverityLevel.info,
+                message: 'Log email was sent',
+                origin: 'send-email-logs.usecase.ts',
+            });
             this.logRepository.saveLog(log);
 
             return true;
         } catch (error) {
-            const log = new LogEntity(
-                LogSeverityLevel.error,
-                'Error sending email log',
-            );
+            const log = new LogEntity({
+                level: LogSeverityLevel.error,
+                message: 'Error sending email log',
+                origin: 'send-email-logs.usecase.ts',
+            });
             this.logRepository.saveLog(log);
             return false;
         }
