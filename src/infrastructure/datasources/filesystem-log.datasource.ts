@@ -61,9 +61,13 @@ export class FileSystemLogDataSource  implements LogDatasource {
 
     private async getLogsFromFile(path: string): Promise<LogEntity[]> {
         const content : string[] = fs.readFileSync(path, 'utf-8').split('\n');
+        if (content.length === 0 || content[0] === '') {
+            return [];
+        }
         // const logs: LogEntity[] = content.map((log) => LogEntity.fromJson(log)); 
         // return logs;
-        return content.map(LogEntity.fromJson); 
+        const result = content.map(LogEntity.fromJson).filter((log): log is LogEntity => log !== undefined);
+        return result 
     }
 
     getLogs(severity: LogSeverityLevel): Promise<LogEntity[]> {

@@ -1,3 +1,4 @@
+import { LogSeverityLevel } from "../domain/entities/log.entity";
 import { SendLogEmailUseCaseImpl } from "../domain/use-cases/email/send-email-logs.usecase";
 import { FileSystemLogDataSource } from "../infrastructure/datasources/filesystem-log.datasource";
 import { MongoBDLogDataSource } from "../infrastructure/datasources/mongodb-log-datasource";
@@ -8,8 +9,8 @@ import { EmailService } from "./email/email.service";
 
 //Instancias de las implementaciones de los casos de uso
 const logRepository = new LogRepositoryImpl(
-    // new FileSystemLogDataSource()
-    new MongoBDLogDataSource()
+    new FileSystemLogDataSource()
+    // new MongoBDLogDataSource()
     //new postgressSQLLogDataSource()
     //new sqliteLogDataSource()
     //new sqlServerLogDataSource()
@@ -20,7 +21,7 @@ const emailService = new EmailService();
 
 export class Server {
 
-    public static start() {
+    public static async start() {
         console.log('Server started');
 
         //Mandar email
@@ -42,10 +43,15 @@ export class Server {
 
 
         //Mandar email con el UseCase
-        const sendLogEmailUseCase = new SendLogEmailUseCaseImpl(emailService, logRepository);
-        sendLogEmailUseCase.execute('carles.labrana@idealiveconsulting.com');
+        // const sendLogEmailUseCase = new SendLogEmailUseCaseImpl(emailService, logRepository);
+        // sendLogEmailUseCase.execute('carles.labrana@idealiveconsulting.com');
 
-         
+        //Recuperar directamente del Repositorio
+        const logs = await logRepository.getLogs(LogSeverityLevel.warning);
+        console.log(logs);        
+
+
+
     }
 
 
