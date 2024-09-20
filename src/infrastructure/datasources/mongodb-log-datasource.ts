@@ -8,7 +8,11 @@ import { envs } from "../../adapters/envs.adapter";
 export class MongoBDLogDataSource implements LogDatasource {
 
     constructor() {
-        // this.connect();
+        this.initialize();
+    }
+
+    private async initialize() {
+        await this.connect();
     }
 
 
@@ -30,11 +34,16 @@ export class MongoBDLogDataSource implements LogDatasource {
 
     }
 
-    private connect()  {
+    private async connect()  {
+
+        // await MongoDatabase.connect({
+        //     mongoUrl: envs.MONGO_DB_URL,
+        //     dbName: envs.MONGO_DB_NAME
+        // });
+
         mongoose.connect(envs.MONGO_DB_URL,
             {
                 dbName: envs.MONGO_DB_NAME
-                
             }
         );
     
