@@ -1,3 +1,4 @@
+import { CronAdapter } from "../adapters/cron.adapter";
 import { LogSeverityLevel } from "../domain/entities/log.entity";
 import { SendLogEmailUseCaseImpl } from "../domain/use-cases/email/send-email-logs.usecase";
 import { FileSystemLogDataSource } from "../infrastructure/datasources/filesystem-log.datasource";
@@ -5,7 +6,6 @@ import { MongoBDLogDataSource } from "../infrastructure/datasources/mongodb-log-
 import { PostgresqlLogDataSource } from "../infrastructure/datasources/postgresql-log.datasource";
 import { LogRepositoryImpl } from "../infrastructure/repositories/log.repository-impl";
 import { EmailService } from "./email/email.service";
-
 
 
 //Instancias de las implementaciones de los casos de uso
@@ -50,10 +50,16 @@ export class Server {
 
         
         //Recuperar directamente del Repositorio
-        const logs = await logRepository.getLogs(LogSeverityLevel.info);
-        console.log(logs);        
+        // const logs = await logRepository.getLogs(LogSeverityLevel.info);
+        // console.log(logs);        
 
-
+        CronAdapter.createJob( 
+            '*/5 * * * * *', 
+            async () => {
+                console.log('Running cron job every 6 seconds');
+                // const sendLogEmailUseCase = new SendLogEmailUseCaseImpl(emailService, logRepository);
+                // sendLogEmailUseCase.execute('
+        })
 
     }
 
