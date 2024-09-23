@@ -1,5 +1,6 @@
 import { CronAdapter } from "../adapters/cron.adapter";
 import { LogSeverityLevel } from "../domain/entities/log.entity";
+import { CheckServiceMultiple } from "../domain/use-cases/check/check-service-multiple";
 import { SendLogEmailUseCaseImpl } from "../domain/use-cases/email/send-email-logs.usecase";
 import { FileSystemLogDataSource } from "../infrastructure/datasources/filesystem-log.datasource";
 import { MongoBDLogDataSource } from "../infrastructure/datasources/mongodb-log-datasource";
@@ -9,15 +10,15 @@ import { EmailService } from "./email/email.service";
 
 
 //Instancias de las implementaciones de los casos de uso
-const logRepository = new LogRepositoryImpl(
-    // new FileSystemLogDataSource()
-    new MongoBDLogDataSource()
-    // new PostgresqlLogDataSource()
-
+const fsLogRepository = new LogRepositoryImpl(
+    new FileSystemLogDataSource()
+);
+const mongoLogRepository = new LogRepositoryImpl(new MongoBDLogDataSource());
+const postgresLogRepository = new LogRepositoryImpl(new PostgresqlLogDataSource());
+//TODO: Implementar el resto de repositorios
     //new sqliteLogDataSource()
     //new sqlServerLogDataSource()
-);
-const emailService = new EmailService();
+// const emailService = new EmailService();
 
 
 
@@ -56,10 +57,21 @@ export class Server {
         CronAdapter.createJob( 
             '*/5 * * * * *', 
             async () => {
-                console.log('Running cron job every 6 seconds');
+                const url = 'https://www.google.com';
+
+                new CheckServiceMultiple(
+                    [fsLogRepository, mongoLogRepository, postgresLogRepository], 
+                    async () => {
+                        console.log('Success callback');
+                    },
+                    async (error) => {
+                        console.log('Error callback', error);
+                    }
+                ).execute(url);
                 // const sendLogEmailUseCase = new SendLogEmailUseCaseImpl(emailService, logRepository);
                 // sendLogEmailUseCase.execute('
-        })
+        });
+        
 
     }
 
